@@ -1,0 +1,48 @@
+{
+    "name": "shardimage/shardimage-php-api",
+    "type": "library",
+    "description": "Web Developer Application Programming Interface PHP extension",
+    "keywords": [
+        "shardimage",
+        "api",
+        "php"
+    ],
+    "authors": [
+        {
+            "name": "Shardimage",
+            "email": "info@shardimage.com",
+            "homepage": "https://shardimage.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "guzzlehttp/psr7": "^1.4",
+        "guzzlehttp/guzzle": "^6.2"
+    },
+    "require-dev": {
+        "yiisoft/yii2-apidoc": "~2.0.0",
+        "phpunit/phpunit": "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "shardimage\\shardimagephpapi\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "shardimage\\shardimagephpapi\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        },
+        "asset-installer-paths": {
+            "bower-asset-library": "vendor/bower"
+        }
+    }
+}
