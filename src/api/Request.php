@@ -46,7 +46,7 @@ class Request extends BaseObject
     /**
      * @var string Synchronous/asynchronous request
      */
-    public $mode = self::MODE_SYNC;
+    public $mode = self::MODE_SYNC_PARALLEL;
 
     /**
      * @var int Max. execution time of the request on the backend (secs, 0: no limit)
