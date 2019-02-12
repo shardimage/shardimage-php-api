@@ -164,28 +164,28 @@ class Request
     private function handleError($response, $clientResponse = null)
     {
         if ($response instanceof ApiResponse && !$response->success) {
-            if (array_key_exists('message', $response->error) && is_array($response->error['message'])) {
+            $error = $response->error;
+            if (is_array($error->message)) {
                 // detailed errors
                 return;
             }
-            switch ($response->error['code']) {
+            switch ($error->code) {
                 case ResponseError::ERRORCODE_VALIDATION_FAILURE:
                 case ResponseError::ERRORCODE_OBJECT_NOT_FOUND:
                 case ResponseError::ERRORCODE_HTTP_ERROR:
                     break;
                 default:
-                    $message = !empty($response->error['message']) ? $response->error['message'] : 'Unknown exception';
-                    $code = array_key_exists('code', $response->error) ? $response->error['code'] : 0;
-
+                    $message = !empty($error->message) ? $error->message : 'Unknown exception';
+                    $code = array_key_exists('code', $error) ? $error->code : 0;
                     $ex = false;
-                    if (!empty($response->error['type'])) {
-                        $class = $response->error['type'];
+                    if (!empty($error->type)) {
+                        $class = $error->type;
                         if (!is_a($class, HttpException::class, true)) {
-                            if (isset($response->error['file'])) {
-                                $message .= ' in ' . $response->error['file'] . ':' . $response->error['line'];
+                            if (isset($error->file)) {
+                                $message .= ' in ' . $error->file . ':' . $error->line;
                             }
-                            if (isset($response->error['trace'])) {
-                                $message .= "\n\nRemote stack trace:\n" . (is_array($response->error['trace']) ? implode("\n", $response->error['trace']) : $response->error['trace']);
+                            if (isset($error->trace)) {
+                                $message .= "\n\nRemote stack trace:\n" . (is_array($error->trace) ? implode("\n", $error->trace) : $error->trace);
                             }
                             $ex = new $class($message, $code);
                         }

@@ -28,11 +28,6 @@ class Response extends BaseObject implements \JsonSerializable
     public $success = true;
 
     /**
-     * @var ResponseError|null Error object for the request
-     */
-    public $error;
-
-    /**
      * @var string|null Job ID for a polling request
      */
     public $jobId;
@@ -51,4 +46,24 @@ class Response extends BaseObject implements \JsonSerializable
      * @var callable Method to run after a successful non-polling request
      */
     public $callback;
+
+    /**
+     * @var ResponseError|null Error object for the request
+     */
+    private $error;
+
+    /**
+     * @return ResponseError|null
+     */
+    public function getError() {
+        return $this->error;
+    }
+
+    /**
+     * @param array|null $error
+     */
+    public function setError($error) {
+        $this->error = new ResponseError($error);
+    }
+
 }
