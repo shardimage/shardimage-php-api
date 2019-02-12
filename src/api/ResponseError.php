@@ -55,11 +55,6 @@ class ResponseError extends BaseObject implements \JsonSerializable
     public $code;
 
     /**
-     * @var string Exception message
-     */
-    public $message;
-
-    /**
      * @var string Exception source
      */
     public $file;
@@ -73,4 +68,30 @@ class ResponseError extends BaseObject implements \JsonSerializable
      * @var string Exception debug backtrace string
      */
     public $trace;
+
+        
+    /**
+     * @var array Error message
+     */
+    private $message;
+
+    /**
+     * @return array
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @param string|array $message
+     */
+    public function setMessage($message)
+    {
+        if (!is_array($message)) {
+            $message = ['sdkError' => $message];
+        }
+        $this->message = $message;
+    }
+
 }
