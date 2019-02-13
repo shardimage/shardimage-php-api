@@ -94,4 +94,12 @@ class ResponseError extends BaseObject implements \JsonSerializable
         $this->message = $message;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function getToArrayAttributes()
+    {
+        return array_merge(parent::getToArrayAttributes(), ['message']);
+    }
+
 }

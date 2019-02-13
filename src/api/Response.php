@@ -60,10 +60,21 @@ class Response extends BaseObject implements \JsonSerializable
     }
 
     /**
-     * @param array|null $error
+     * @param ResponseError|array|null $error
      */
     public function setError($error) {
-        $this->error = new ResponseError($error);
+        if (!($error instanceof ResponseError) && !is_null($error)) {
+            $error = new ResponseError($error);
+        }
+        $this->error = $error;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getToArrayAttributes()
+    {
+        return array_merge(parent::getToArrayAttributes(), ['error']);
     }
 
 }

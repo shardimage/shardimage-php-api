@@ -17,6 +17,17 @@ use shardimage\shardimagephpapi\base\exceptions\UnknownPropertyException;
  */
 class BaseObject
 {
+
+    /**
+     * Values for toArray() function. By overwriting, it's possible to add extra attributes,
+     * like private properties used by magic methods.
+     * @return array
+     */
+    protected function getToArrayAttributes()
+    {
+        return array_keys(get_object_vars($this));
+    }
+
     /**
      * Creates the object, populates the properties and calls the "init" method.
      *
@@ -135,11 +146,13 @@ class BaseObject
      */
     public function toArray($excludeEmpty = false)
     {
-        $result = get_object_vars($this);
-        foreach ($result as $key => $value) {
+        $result = [];
+        foreach ($this->getToArrayAttributes() as $key) {
+            $value = $this->$key;
             if ($value instanceof self) {
-                $result[$key] = $value->toArray($excludeEmpty);
+                $value = $value->toArray($excludeEmpty);
             }
+            $result[$key] = $value;
         }
         if ($excludeEmpty) {
             $result = array_filter($result, function ($value) {

@@ -416,7 +416,15 @@ class Request
                     }
                     break;
                 default:
-                    throw new InvalidValueException('Unsupported content type in response!');
+                    $body = "BinaryContent";
+                    if (mb_detect_encoding($rawResponse->body, 'UTF-8')) {
+                        $body = $rawResponse->body;
+                        if (mb_strlen($body) > 500) {
+                            $body = mb_substr($body, 0, 500) . "...";
+                        }
+                    }
+                    $message = sprintf('Unsupported content type in response! Type:%s Body: %s', $rawResponse->type, $body);
+                    throw new InvalidValueException($message);
             }
             if (!isset($content)) {
                 throw new InvalidValueException('Invalid content in response!');
