@@ -134,7 +134,11 @@ class BaseRequest
      */
     protected function prepareUrlReplaceParams(&$replace, $findKey, $paramValue)
     {
-        $replace['<' . $findKey . '>'] = $this->formatUriParam($findKey, $paramValue);
+        $param = $this->formatUriParam($findKey, $paramValue);
+        if (strlen($param) === 0) {
+            throw new InvalidValueException(sprintf("Can't be empty string: %s", $findKey));
+        }
+        $replace['<' . $findKey . '>'] = $param;
     }
 
     /**
