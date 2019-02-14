@@ -100,6 +100,7 @@ class Request
 
         $options = [
             'decode_content' => false,
+            'timeout' => $this->client->timeout,
         ];
         if (isset($this->client->proxy)) {
             $options['proxy'] = $this->client->proxy;

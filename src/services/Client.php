@@ -59,6 +59,11 @@ class Client extends BaseService
     public $cacheExpiration = 0;
 
     /**
+     * @var int Request timeout [sec]
+     */
+    public $timeout = 180;
+
+    /**
      * Initializes the client data.
      * 
      * @throws InvalidConfigException
