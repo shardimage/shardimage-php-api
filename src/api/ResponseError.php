@@ -10,6 +10,7 @@
 namespace shardimage\shardimagephpapi\api;
 
 use shardimage\shardimagephpapi\base\BaseObject;
+use shardimage\shardimagephpapi\web\exceptions\HttpException;
 
 /**
  * Error object for a request.
@@ -45,6 +46,11 @@ class ResponseError extends BaseObject implements \JsonSerializable
     const ERRORCODE_HTTP_ERROR = 1003;
 
     /**
+     * HTTP response error.
+     */
+    const ERRORCODE_HTTP_RESPONSE_ERROR = 1004;
+
+    /**
      * @var string Exception type
      */
     public $type;
@@ -69,6 +75,15 @@ class ResponseError extends BaseObject implements \JsonSerializable
      */
     public $trace;
 
+    /**
+     * @var Exception Exception object itself
+     */
+    private $exception = false;
+
+    /**
+     * @var Response
+     */
+    public $response;
         
     /**
      * @var array Error message
@@ -92,6 +107,32 @@ class ResponseError extends BaseObject implements \JsonSerializable
             $message = ['sdkError' => $message];
         }
         $this->message = $message;
+    }
+
+    /**
+     * @return Exception
+     */
+    public function getException()
+    {
+        if ($this->exception === false) {
+            $responseMessage = $this->message ?? null;
+            $message = 'API error';
+            if (is_string($responseMessage)) {
+                $message = $responseMessage;
+            } elseif (is_array($responseMessage)) {
+                foreach ($responseMessage as $attribute => $errors) {
+                    $errorMessage = $errors[0] ?? '';
+                    $params = $errors[1] ?? [];
+                    $placeholders = [];
+                    foreach ((array) $params as $name => $value) {
+                        $placeholders['{' . $name . '}'] = $value;
+                    }
+                    $message .= sprintf(' / %s: %s', $attribute, ($placeholders === []) ? $errorMessage : strtr($errorMessage, $placeholders));
+                }
+            }
+            $this->exception = HttpException::newInstance($this->response->meta['statusCode'], $message, $this->code, is_array($responseMessage) ? $responseMessage : null);
+        }
+        return $this->exception;
     }
 
     /**

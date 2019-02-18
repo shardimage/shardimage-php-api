@@ -227,6 +227,12 @@ class Request extends BaseObject
         if (isset($this->restAction, self::$restMethods[$this->restAction])) {
             $this->method = self::$restMethods[$this->restAction];
         }
+        if (!isset($this->uriParamFormatter)) {
+            $this->uriParamFormatter = function($param, $value)
+            {
+                return rawurlencode($value);
+            };
+        }
     }
 
     /**

@@ -177,7 +177,7 @@ class Request
                     break;
                 default:
                     $message = !empty($error->message) ? $error->message : 'Unknown exception';
-                    $code = array_key_exists('code', $error) ? $error->code : 0;
+                    $code = $error->code ?? 0;
                     $ex = false;
                     if (!empty($error->type)) {
                         $class = $error->type;

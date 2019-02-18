@@ -66,6 +66,7 @@ class Response extends BaseObject implements \JsonSerializable
         if (!($error instanceof ResponseError) && !is_null($error)) {
             $error = new ResponseError($error);
         }
+        $error->response = $this;
         $this->error = $error;
     }
 
