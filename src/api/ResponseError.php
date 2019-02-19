@@ -83,7 +83,7 @@ class ResponseError extends BaseObject implements \JsonSerializable
     /**
      * @var Response
      */
-    public $response;
+    private $response;
         
     /**
      * @var array Error message
@@ -107,6 +107,14 @@ class ResponseError extends BaseObject implements \JsonSerializable
             $message = ['sdkError' => $message];
         }
         $this->message = $message;
+    }
+
+    /**
+     * @param Response $response
+     */
+    public function setResponse($response)
+    {
+        $this->response = $response;
     }
 
     /**
