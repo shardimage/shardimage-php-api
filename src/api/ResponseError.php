@@ -129,13 +129,17 @@ class ResponseError extends BaseObject implements \JsonSerializable
                 $message = $responseMessage;
             } elseif (is_array($responseMessage)) {
                 foreach ($responseMessage as $attribute => $errors) {
-                    $errorMessage = $errors[0] ?? '';
-                    $params = $errors[1] ?? [];
-                    $placeholders = [];
-                    foreach ((array) $params as $name => $value) {
-                        $placeholders['{' . $name . '}'] = $value;
+                    if (is_array($errors)) {
+                        $errorMessage = $errors[0] ?? '';
+                        $params = $errors[1] ?? [];
+                        $placeholders = [];
+                        foreach ((array) $params as $name => $value) {
+                            $placeholders['{' . $name . '}'] = $value;
+                        }
+                        $message .= sprintf(' / %s: %s', $attribute, ($placeholders === []) ? $errorMessage : strtr($errorMessage, $placeholders));
+                    } else {
+                        $message = sprintf('%s / %s', $attribute, $errors);
                     }
-                    $message .= sprintf(' / %s: %s', $attribute, ($placeholders === []) ? $errorMessage : strtr($errorMessage, $placeholders));
                 }
             }
             $this->exception = HttpException::newInstance($this->response->meta['statusCode'], $message, $this->code, is_array($responseMessage) ? $responseMessage : null);
