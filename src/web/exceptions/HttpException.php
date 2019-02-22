@@ -104,6 +104,7 @@ class HttpException extends Exception
      */
     public function setHeaders($headers)
     {
+        $headers = array_change_key_case($headers, CASE_LOWER);
         $this->headers = $headers;
     }
 

@@ -48,6 +48,11 @@ class Response extends BaseObject implements \JsonSerializable
     public $callback;
 
     /**
+     * @var array Response Headers
+     */
+    public $headers = [];
+
+    /**
      * @var ResponseError|null Error object for the request
      */
     private $error;

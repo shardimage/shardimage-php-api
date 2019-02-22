@@ -449,6 +449,7 @@ class Request
         $meta = isset($content['meta']) ? $content['meta'] : [];
         $content['meta'] = array_merge($rawResponse->customHeaders, $meta);
         $content['meta']['statusCode'] = (int) $rawResponse->statusCode;
+        $content['headers'] = $rawResponse->headers;
         if (isset($content['data'])) {
             FileHelper::processFiles($content['data'], $content['id']);
         }

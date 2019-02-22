@@ -15,7 +15,7 @@ class TooManyRequestsHttpException extends HttpException
     {
         $headers = $this->getHeaders();
         if ($headers) {
-            return isset($headers['X-Rate-Limit-Limit'][0]) ? (int)$headers['X-Rate-Limit-Limit'][0] : null;
+            return isset($headers['x-rate-limit-limit']) ? (int)$headers['x-rate-limit-limit'] : null;
         }
         return null;
     }
@@ -24,7 +24,7 @@ class TooManyRequestsHttpException extends HttpException
     {
         $headers = $this->getHeaders();
         if ($headers) {
-            return isset($headers['X-Rate-Limit-Remaining'][0]) ? (int)$headers['X-Rate-Limit-LiRemainingmit'][0] : null;
+            return isset($headers['x-rate-limit-remaining']) ? (int)$headers['x-rate-limit-remaining'] : null;
         }
         return null;
     }
@@ -33,7 +33,7 @@ class TooManyRequestsHttpException extends HttpException
     {
         $headers = $this->getHeaders();
         if ($headers) {
-            return isset($headers['X-Rate-Limit-Reset'][0]) ? (int)$headers['X-Rate-Limit-Reset'][0] : null;
+            return isset($headers['x-rate-limit-reset']) ? (int)$headers['x-rate-limit-reset'] : null;
         }
         return null;
     }

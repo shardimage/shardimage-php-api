@@ -142,7 +142,7 @@ class ResponseError extends BaseObject implements \JsonSerializable
                     }
                 }
             }
-            $this->exception = HttpException::newInstance($this->response->meta['statusCode'], $message, $this->code, is_array($responseMessage) ? $responseMessage : null);
+            $this->exception = HttpException::newInstance($this->response->meta['statusCode'], $message, $this->code, is_array($responseMessage) ? $responseMessage : null, null, $this->response->headers);
         }
         return $this->exception;
     }
