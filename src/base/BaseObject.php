@@ -133,7 +133,7 @@ class BaseObject
      */
     protected function ensureClass($name, $class)
     {
-        if (!$this->$name instanceof $class) {
+        if (!is_null($this->$name) && !$this->$name instanceof $class) {
             $this->$name = new $class($this->$name);
         }
     }
