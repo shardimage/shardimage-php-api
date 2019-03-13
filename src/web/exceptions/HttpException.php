@@ -78,6 +78,7 @@ class HttpException extends Exception
             423 => LockedHttpException::class,
             429 => TooManyRequestsHttpException::class,
             500 => ServerErrorHttpException::class,
+            501 => NotImplementedHttpException::class,
             502 => BadGatewayHttpException::class,
             503 => ServiceUnavailableHttpException::class,
         ];
