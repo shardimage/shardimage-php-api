@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.0-alpha16] - 2019-04-08
+ ### Add
+ - Added license information to composer.json file.
  ### Change
  - `MultipartRequest` class is setting the `Content-Id` header from the API request.
 

@@ -2,6 +2,7 @@
     "name": "shardimage/shardimage-php-api",
     "type": "library",
     "description": "Web Developer Application Programming Interface PHP extension",
+    "license": "Apache-2.0",
     "keywords": [
         "shardimage",
         "api",
