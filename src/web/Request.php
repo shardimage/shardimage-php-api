@@ -285,6 +285,7 @@ class Request
         }
 
         return new MultipartRequest($this->client, new ApiRequest([
+                    'id' => $request->id,
                     'requests' => $requests,
                     'boundary' => ApiHelper::generateId(),
                     'multipartType' => 'related',

@@ -44,6 +44,7 @@ class MultipartRequest extends BaseRequest
             Http::HEADER_CONTENT_TRANSFER_ENCODING => 'binary',
             Http::HEADER_CONTENT_LENGTH => strlen($this->getBody()),
             $this->service->buildCustomHeader('Mode') => $this->request->mode,
+            Http::HEADER_CONTENT_ID => $this->request->id,
         ];
     }
 
