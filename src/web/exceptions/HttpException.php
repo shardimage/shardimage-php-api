@@ -76,6 +76,7 @@ class HttpException extends Exception
             416 => RangeNotSatisfiableHttpException::class,
             422 => UnprocessableEntityHttpException::class,
             423 => LockedHttpException::class,
+            424 => FailedDependencyHttpException::class,
             429 => TooManyRequestsHttpException::class,
             500 => ServerErrorHttpException::class,
             501 => NotImplementedHttpException::class,
