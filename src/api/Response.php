@@ -13,6 +13,8 @@ use shardimage\shardimagephpapi\base\BaseObject;
 
 /**
  * API response object.
+ *
+ * @property ResponseError|null $error Error object for the request, null if no error occurred
  */
 class Response extends BaseObject implements \JsonSerializable
 {
