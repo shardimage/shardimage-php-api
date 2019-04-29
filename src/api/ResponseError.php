@@ -16,6 +16,10 @@ use shardimage\shardimagephpapi\web\exceptions\HttpException;
  * Error object for a request.
  *
  * Stores all relevant data for the exception thrown in the backend or other user errors.
+ *
+ * @property array $message Error message
+ * @property-read Exception $exception Exception object itself
+ * @property-write Response $response Response object
  */
 class ResponseError extends BaseObject implements \JsonSerializable
 {
