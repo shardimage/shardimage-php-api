@@ -64,6 +64,11 @@ class Client extends BaseService
     public $timeout = 180;
 
     /**
+     * @var string
+     */
+    public $acceptLanguage;
+
+    /**
      * Initializes the client data.
      * 
      * @throws InvalidConfigException

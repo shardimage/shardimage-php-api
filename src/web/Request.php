@@ -518,8 +518,8 @@ class Request
         if (!isset($headers[Http::HEADER_CONTENT_ID])) {
             $headers[Http::HEADER_CONTENT_ID] = ApiHelper::generateId();
         }
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            $headers[Http::HEADER_ACCEPT_LANGUAGE] = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        if (is_string($this->client->acceptLanguage)) {
+            $headers[Http::HEADER_ACCEPT_LANGUAGE] = $this->client->acceptLanguage;
         }
         if ($this->client->cache && in_array($method, ['GET', 'HEAD'])) {
             $cachedContent = $this->cache[$headers[Http::HEADER_CONTENT_ID]] = new CachedContent([
