@@ -418,18 +418,10 @@ class Request
                     }
                     break;
                 default:
-                    $body = "BinaryContent";
-                    if (mb_detect_encoding($rawResponse->body, 'UTF-8')) {
-                        $body = $rawResponse->body;
-                        if (mb_strlen($body) > 500) {
-                            $body = mb_substr($body, 0, 500) . "...";
-                        }
-                    }
-                    $message = sprintf('Unsupported content type in response! Type:%s Body: %s', $rawResponse->type, $body);
-                    throw new InvalidValueException($message);
+                    $this->buildExceptionFromResponse($rawResponse);
             }
             if (!isset($content)) {
-                throw new InvalidValueException('Invalid content in response!');
+                $this->buildExceptionFromResponse($rawResponse);
             }
         } else {
             $content = null;
@@ -463,6 +455,25 @@ class Request
         }
 
         return new ApiResponse($content);
+    }
+
+    /**
+     * Build up and throws InvalidValueException from data of response.
+     *
+     * @param RawResponse $rawResponse Raw HTTP response
+     * @throws InvalidValueException
+     */
+    private function buildExceptionFromResponse($rawResponse)
+    {
+        $body = "BinaryContent";
+        if (mb_detect_encoding($rawResponse->body, 'UTF-8')) {
+            $body = $rawResponse->body;
+            if (mb_strlen($body) > 500) {
+                $body = mb_substr($body, 0, 500) . "...";
+            }
+        }
+        $message = sprintf('Invalid or unsupported content type in response! Type:%s Body: %s', $rawResponse->type, $body);
+        throw new InvalidValueException($message);
     }
 
     /**
