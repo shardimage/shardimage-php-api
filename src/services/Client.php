@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @link https://github.com/shardimage/shardimage-php-api
  * @link https://developers.shardimage.com
@@ -12,12 +13,15 @@ namespace shardimage\shardimagephpapi\services;
 use shardimage\shardimagephpapi\api\auth\NullAuthData;
 use shardimage\shardimagephpapi\base\exceptions\InvalidConfigException;
 use shardimage\shardimagephpapi\base\caches\CacheInterface;
+use shardimage\shardimagephpapi\services\dump\DumpServiceInterface;
+use shardimage\shardimagephpapi\services\dump\BlackholeDumpService;
 
 /**
  * Client service.
  */
 class Client extends BaseService
 {
+
     /**
      * @var string Authentication class
      */
@@ -69,6 +73,11 @@ class Client extends BaseService
     public $acceptLanguage;
 
     /**
+     * @var DumpServiceInterface
+     */
+    public $dumpService;
+
+    /**
      * Initializes the client data.
      * 
      * @throws InvalidConfigException
@@ -79,5 +88,12 @@ class Client extends BaseService
         if (!isset($this->host)) {
             throw new InvalidConfigException('API host must be specified!');
         }
+        if (!isset($this->dumpService)) {
+            $this->dumpService = new BlackholeDumpService();
+        }
+        if (!($this->dumpService instanceof DumpServiceInterface)) {
+            throw new InvalidConfigException('The dumpService object must to implement the DumpServiceInterface!');
+        }
     }
+
 }

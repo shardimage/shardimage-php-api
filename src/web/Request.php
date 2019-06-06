@@ -29,6 +29,7 @@ use shardimage\shardimagephpapi\web\requests\MultipartRequest;
 use shardimage\shardimagephpapi\web\requests\PollRequest;
 use shardimage\shardimagephpapi\web\requests\RestRequest;
 use shardimage\shardimagephpapi\web\exceptions\HttpException;
+use shardimage\shardimagephpapi\services\dump\DumpServiceInterface;
 
 /**
  * Request handler object.
@@ -90,13 +91,13 @@ class Request
     {
         $request = $this->createRequest();
 
-        $log = "--------------------------------\r\nRequest\r\n--------------------------------\r\n";
-        $log .= (string) $request->getMethod() . ' ' . (string) $request->getUri() . "\r\n";
+        $requestLogHeader = "--------------------------------\r\nRequest\r\n--------------------------------\r\n";
+        $requestLog = (string) $request->getMethod() . ' ' . (string) $request->getUri() . " HTTP/1.1\r\n";
         foreach ($request->getHeaders() as $header => $values) {
-            $log .= $header . ': ' . implode('; ', $values) . "\r\n";
+            $requestLog .= $header . ': ' . implode('; ', $values) . "\r\n";
         }
-        $log .= (string) $request->getBody();
-        $this->client->log(LOG_INFO, $log);
+        $requestLog .= (string) $request->getBody();
+        $this->client->log(LOG_INFO, $requestLogHeader . $requestLog);
 
         $options = [
             'decode_content' => false,
@@ -115,18 +116,17 @@ class Request
             }
         }
 
-        $log = "--------------------------------\r\nResponse\r\n--------------------------------\r\n";
-        $log .= $clientResponse->getStatusCode() . "\r\n";
+        $responseLogHeader = "--------------------------------\r\nResponse\r\n--------------------------------\r\n";
+        $responseLog = "HTTP/1.1 ". $clientResponse->getStatusCode() . " " . $clientResponse->getReasonPhrase() . "\r\n";
         if ($clientResponse->getStatusCode() == 204) {
             $clientResponse = $clientResponse->withoutHeader('Content-Type');
         }
         foreach ($clientResponse->getHeaders() as $header => $values) {
-            $log .= $header . ': ' . implode('; ', $values) . "\r\n";
+            $responseLog .= $header . ': ' . implode('; ', $values) . "\r\n";
         }
-        $log .= (string) $clientResponse->getBody();
-        $this->client->log(LOG_INFO, $log);
-
-        $response = $this->parseResponse($clientResponse);
+        $responseLog .= (string) $clientResponse->getBody();
+        $this->client->log(LOG_INFO, $responseLogHeader . $responseLog);
+        $response = $this->parseResponse($clientResponse, $requestLog, $responseLog);
         $this->handleError($response, $clientResponse);
 
         return $response;
@@ -297,10 +297,12 @@ class Request
      * Parses the response and returns one or more API responses.
      *
      * @param string|\Psr\Http\Message\ResponseInterface $response Response
+     * @param string|null $requestLog
+     * @param string|null $responseLog
      *
      * @return ApiResponse|ApiResponse[]
      */
-    private function parseResponse($response)
+    private function parseResponse($response, $requestLog = null, $responseLog = null)
     {
         $rawResponse = new RawResponse($this->client, $response);
         $contentId = isset($rawResponse->headers['content-id']) ? $rawResponse->headers['content-id'] : null;
@@ -332,8 +334,15 @@ class Request
         if (!method_exists($this, $method)) {
             $method = 'parseDefaultResponse';
         }
-
-        return $this->$method($rawResponse);
+        try {
+            return $this->$method($rawResponse);
+        } catch (\Exception $ex) {
+            $this->client->dumpService->setPrefix($contentId);
+            $this->client->dumpService->save($requestLog, DumpServiceInterface::DUMPTYPE_REQUEST);
+            $this->client->dumpService->save($responseLog, DumpServiceInterface::DUMPTYPE_RESPONSE);
+            $this->client->dumpService->saveException($ex);
+            throw $ex;
+        }
     }
 
     /**
