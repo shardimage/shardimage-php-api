@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-alpha23] - 2019-06-06
+ ### Add
+ - Added dumping service classes to dump request and response data out for further examination.
+
 ## [1.0.0-alpha22] - 2019-05-30
  ### Change
  - Added more information to the debug if an error occurs during the parsing of the response.
