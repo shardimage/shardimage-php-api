@@ -356,7 +356,20 @@ class Request
     {
         $responses = [];
         foreach ($rawResponse->parts as $part) {
-            $response = $this->parseResponse($part);
+            $response = null;
+            try {
+                $response = $this->parseResponse($part);
+            } catch (\Exception $ex) {
+                $response = new ApiResponse([
+                    'success' => false,
+                    'error' => new ResponseError([
+                        'type' => get_class($ex),
+                        'code' => $ex->getCode(),
+                        'message' => ['httpError' => $ex->getMessage()],
+                        'exception' => $ex,
+                    ]),
+                ]);
+            }
             $responses[$response->id] = $response;
         }
 
