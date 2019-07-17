@@ -152,6 +152,15 @@ class ResponseError extends BaseObject implements \JsonSerializable
     }
 
     /**
+     * @param /Exception $exception
+     * @return void
+     */
+    public function setException($exception)
+    {
+        $this->exception = $exception;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function getToArrayAttributes()

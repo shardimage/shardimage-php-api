@@ -53,6 +53,11 @@ class Request
     private $cache = [];
 
     /**
+     * @var string
+     */
+    private $lastParsedContentId;
+
+    /**
      * Creates a request handler.
      *
      * @param Client                       $client  Client service
@@ -306,6 +311,7 @@ class Request
     {
         $rawResponse = new RawResponse($this->client, $response);
         $contentId = isset($rawResponse->headers['content-id']) ? $rawResponse->headers['content-id'] : null;
+        $this->lastParsedContentId = $contentId;
         if (!isset($contentId) && count($this->cache) == 1) {
             $contentId = key($this->cache);
         }
@@ -358,9 +364,11 @@ class Request
         foreach ($rawResponse->parts as $part) {
             $response = null;
             try {
+                $this->lastParsedContentId = null;
                 $response = $this->parseResponse($part);
-            } catch (\Exception $ex) {
+            } catch (\Throwable $ex) {
                 $response = new ApiResponse([
+                    'id' => $this->lastParsedContentId ?? join('-', ['sdkError', ApiHelper::generateId()]),
                     'success' => false,
                     'error' => new ResponseError([
                         'type' => get_class($ex),
