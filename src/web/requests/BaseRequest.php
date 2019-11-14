@@ -161,7 +161,7 @@ class BaseRequest
     public function getHeaders()
     {
         return [
-            Http::HEADER_CONTENT_TYPE => $this->service->useMsgPack && function_exists('msgpack_pack') ? 'application/msgpack' : 'application/json; charset=utf-8',
+            Http::HEADER_CONTENT_TYPE => $this->service->useMsgPack ? 'application/msgpack' : 'application/json; charset=utf-8',
             Http::HEADER_CONTENT_ID => $this->request->id,
         ];
     }
@@ -182,7 +182,7 @@ class BaseRequest
         if (empty($postParams)) {
             return '';
         }
-        $body = $this->service->useMsgPack && function_exists('msgpack_pack') ? msgpack_pack($postParams) : JsonHelper::encode($postParams);
+        $body = $this->service->useMsgPack ? msgpack_pack($postParams) : JsonHelper::encode($postParams);
         if ($body === false) {
             throw new InvalidValueException('Invalid body value (must be UTF-8 compatible)!');
         }

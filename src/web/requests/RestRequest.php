@@ -69,7 +69,7 @@ class RestRequest extends BaseRequest
         if (is_null($this->body)) {
             $body = null;
             if (!empty($this->request->postParams)) {
-                $body = $this->service->useMsgPack && function_exists('msgpack_pack') ? msgpack_pack($this->request->safePostParams) : JsonHelper::encode($this->request->safePostParams);
+                $body = $this->service->useMsgPack ? msgpack_pack($this->request->safePostParams) : JsonHelper::encode($this->request->safePostParams);
                 if ($body === false) {
                     throw new InvalidValueException('Invalid model value (must be UTF-8 compatible)!');
                 }

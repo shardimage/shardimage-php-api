@@ -45,5 +45,8 @@
         "asset-installer-paths": {
             "bower-asset-library": "vendor/bower"
         }
+    },
+    "suggest": {
+        "ext-msgpack": "Allows API communicating with MessagePack serialization."
     }
 }

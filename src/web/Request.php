@@ -95,6 +95,7 @@ class Request
     public function send()
     {
         $request = $this->createRequest();
+        $request = $request->withAddedHeader('Referrer', $request->getHeaderLine('Content-Id'));
 
         $requestLogHeader = "--------------------------------\r\nRequest\r\n--------------------------------\r\n";
         $requestLog = (string) $request->getMethod() . ' ' . (string) $request->getUri() . " HTTP/1.1\r\n";
@@ -441,11 +442,7 @@ class Request
                     break;
                 case 'application/msgpack':
                 case 'application/x-msgpack':
-                    if (function_exists('msgpack_pack')) {
-                        $content = msgpack_unpack((string) $rawResponse->body);
-                    } else {
-                        throw new InvalidValueException('MsgPack PHP extension not installed!');
-                    }
+                    $content = msgpack_unpack((string) $rawResponse->body);
                     break;
                 default:
                     $this->buildExceptionFromResponse($rawResponse);

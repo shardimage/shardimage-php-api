@@ -23,7 +23,7 @@ class HttpException extends Exception
     /**
      * @var array response header-ek
      */
-    private $headers;
+    private $headers = [];
 
     /**
      *
@@ -120,4 +120,32 @@ class HttpException extends Exception
         return $this->headers;
     }
 
+    /**
+     * Set a specific header.
+     * @param string $key
+     * @param string $value
+     */
+    public function setHeader($key, $value)
+    {
+        $this->headers[$key] = $value;
+    }
+
+    /**
+     * Get a specific header value.
+     * @param string $key
+     * @return string|null
+     */
+    public function getHeader($key)
+    {
+        return $this->headers[$key] ?? null;
+    }
+
+    /**
+     * Remove a specific header.
+     * @param string $key
+     */
+    public function removeHeader($key)
+    {
+        unset($this->headers[$key]);
+    }
 }

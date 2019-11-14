@@ -12,6 +12,7 @@ namespace shardimage\shardimagephpapi\services;
 
 use shardimage\shardimagephpapi\api\auth\NullAuthData;
 use shardimage\shardimagephpapi\base\exceptions\InvalidConfigException;
+use shardimage\shardimagephpapi\base\exceptions\InvalidValueException;
 use shardimage\shardimagephpapi\base\caches\CacheInterface;
 use shardimage\shardimagephpapi\services\dump\DumpServiceInterface;
 use shardimage\shardimagephpapi\services\dump\BlackholeDumpService;
@@ -36,11 +37,6 @@ class Client extends BaseService
      * @var array Additional HTTP headers
      */
     public $headers = [];
-
-    /**
-     * @var bool MsgPack support
-     */
-    public $useMsgPack = true;
 
     /**
      * @var Gzip compression support
@@ -78,6 +74,11 @@ class Client extends BaseService
     public $dumpService;
 
     /**
+     * @var bool MsgPack support
+     */
+    private $useMsgPack;
+
+    /**
      * Initializes the client data.
      * 
      * @throws InvalidConfigException
@@ -96,4 +97,27 @@ class Client extends BaseService
         }
     }
 
+    /**
+     * Setting useMsgPack value.
+     * @param bool $value
+     */
+    public function setUseMsgPack($value)
+    {
+        if (!is_bool($value)) {
+            throw new InvalidConfigException("The 'useMsgPack' value must to be boolean!");
+        }
+        if ($value && !function_exists('msgpack_pack')) {
+            throw new InvalidValueException('MsgPack PHP extension not installed!');
+        }
+        $this->useMsgPack = $value;
+    }
+
+    /**
+     * Getting useMsgPack value.
+     * @return bool
+     */
+    public function getUseMsgPack()
+    {
+        return $this->useMsgPack ?? function_exists('msgpack_pack');
+    }
 }
