@@ -170,48 +170,55 @@ class Request
      */
     private function handleError($response, $clientResponse = null)
     {
-        if ($response instanceof ApiResponse && !$response->success) {
-            $error = $response->error;
-            if (is_array($error->message)) {
-                // detailed errors
-                return;
+        if (is_array($response)) {
+            foreach ($response as $singleResponse) {
+                $this->handleError($singleResponse);
             }
-            switch ($error->code) {
-                case ResponseError::ERRORCODE_VALIDATION_FAILURE:
-                case ResponseError::ERRORCODE_OBJECT_NOT_FOUND:
-                case ResponseError::ERRORCODE_HTTP_ERROR:
-                    break;
-                default:
-                    $message = !empty($error->message) ? $error->message : 'Unknown exception';
-                    $code = $error->code ?? 0;
-                    $ex = false;
-                    if (!empty($error->type)) {
-                        $class = $error->type;
-                        if (!is_a($class, HttpException::class, true)) {
-                            if (isset($error->file)) {
-                                $message .= ' in ' . $error->file . ':' . $error->line;
-                            }
-                            if (isset($error->trace)) {
-                                $message .= "\n\nRemote stack trace:\n" . (is_array($error->trace) ? implode("\n", $error->trace) : $error->trace);
-                            }
-                            $ex = new $class($message, $code);
+            return;
+        }
+        if ($response->success) {
+            return;
+        }
+        $error = $response->error;
+        if (is_array($error->message)) {
+            // detailed errors
+            return;
+        }
+        switch ($error->code) {
+            case ResponseError::ERRORCODE_VALIDATION_FAILURE:
+            case ResponseError::ERRORCODE_OBJECT_NOT_FOUND:
+            case ResponseError::ERRORCODE_HTTP_ERROR:
+                break;
+            default:
+                $message = !empty($error->message) ? $error->message : 'Unknown exception';
+                $code = $error->code ?? 0;
+                $ex = false;
+                if (!empty($error->type)) {
+                    $class = $error->type;
+                    if (!is_a($class, HttpException::class, true)) {
+                        if (isset($error->file)) {
+                            $message .= ' in ' . $error->file . ':' . $error->line;
                         }
+                        if (isset($error->trace)) {
+                            $message .= "\n\nRemote stack trace:\n" . (is_array($error->trace) ? implode("\n", $error->trace) : $error->trace);
+                        }
+                        $ex = new $class($message, $code);
                     }
-                    if (!$ex) {
-                        $statusCode = 0;
-                        if($response) {
-                            $statusCode = $response->meta['statusCode'] ?? 0;
-                        } elseif($clientResponse) {
-                            $statusCode = $clientResponse->getStatusCode();
-                        }
-                        $headers = null;
-                        if ($clientResponse) {
-                            $headers = $clientResponse->getHeaders();
-                        }
-                        $ex = HttpException::newInstance($statusCode, $message, $code, null, null, $headers);
+                }
+                if (!$ex) {
+                    $statusCode = 0;
+                    if ($response) {
+                        $statusCode = $response->meta['statusCode'] ?? 0;
+                    } elseif ($clientResponse) {
+                        $statusCode = $clientResponse->getStatusCode();
                     }
-                    throw $ex;
-            }
+                    $headers = null;
+                    if ($clientResponse) {
+                        $headers = $clientResponse->getHeaders();
+                    }
+                    $ex = HttpException::newInstance($statusCode, $message, $code, null, null, $headers);
+                }
+                throw $ex;
         }
     }
 
@@ -338,7 +345,7 @@ class Request
             }
         }
         $method = 'parse' . ApiHelper::camelize($rawResponse->type) . 'response';
-        if (!method_exists($this, $method)) {
+        if ($rawResponse->type === '' || !method_exists($this, $method)) {
             $method = 'parseDefaultResponse';
         }
         try {
