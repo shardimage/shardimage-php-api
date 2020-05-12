@@ -95,7 +95,8 @@ class Request
     public function send()
     {
         $request = $this->createRequest();
-        $request = $request->withAddedHeader('Referrer', $request->getHeaderLine('Content-Id'));
+        $contentId = $request->getHeaderLine('Content-Id') ?? '-';
+        $request = $request->withAddedHeader('Referrer', $contentId);
 
         $requestLogHeader = "--------------------------------\r\nRequest\r\n--------------------------------\r\n";
         $requestLog = (string) $request->getMethod() . ' ' . (string) $request->getUri() . " HTTP/1.1\r\n";
@@ -118,7 +119,7 @@ class Request
         } catch (\GuzzleHttp\Exception\RequestException $ex) {
             $clientResponse = $ex->getResponse();
             if ($clientResponse === null) {
-                throw new HttpException($ex->getMessage());
+                throw new HttpException(sprintf("Message: %s; Content-Id: %s", $ex->getMessage()), $contentId, 0, null, $ex);
             }
         }
 
