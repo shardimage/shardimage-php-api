@@ -119,7 +119,7 @@ class Request
         } catch (\GuzzleHttp\Exception\RequestException $ex) {
             $clientResponse = $ex->getResponse();
             if ($clientResponse === null) {
-                throw new HttpException(sprintf("Message: %s; Content-Id: %s", $ex->getMessage()), $contentId, 0, null, $ex);
+                throw new HttpException($ex->getMessage(), 0, null, $ex, 500, $contentId);
             }
         }
 

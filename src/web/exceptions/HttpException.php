@@ -31,7 +31,12 @@ class HttpException extends Exception
      */
     public $errors;
 
-    public function __construct($message = null, $code = 0, $errors = null, $previous = null, $statusCode = 500)
+    /**
+     * @var string|null request/response ID
+     */
+    public $contentId;
+
+    public function __construct($message = null, $code = 0, $errors = null, $previous = null, $statusCode = 500, $contentId = null)
     {
         $this->statusCode = $statusCode;
         if (is_array($errors)) {
@@ -40,6 +45,7 @@ class HttpException extends Exception
             }
         }
         $this->errors = $errors;
+        $this->contentId = $contentId;
         parent::__construct($message, $code, $previous);
     }
 
@@ -147,5 +153,13 @@ class HttpException extends Exception
     public function removeHeader($key)
     {
         unset($this->headers[$key]);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getContentId()
+    {
+        return $this->contentId;
     }
 }
