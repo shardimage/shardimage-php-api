@@ -34,7 +34,7 @@ class HttpException extends Exception
     /**
      * @var string|null request/response ID
      */
-    public $contentId;
+    private $contentId;
 
     public function __construct($message = null, $code = 0, $errors = null, $previous = null, $statusCode = 500, $contentId = null)
     {

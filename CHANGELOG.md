@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0-alph30] - 2020-05-19
+ ### Change
+ - `HttpException` `$contentId` variable is private from now.
+
 ## [1.0.0-alpha29] - 2020-05-13
  ### Change
  - Changed the `HttpException` class constructor to accept the Content ID as parameter.
