@@ -60,20 +60,55 @@ class RawResponse extends BaseRawMessage
         $this->headers = [];
         @list($headers, $this->body) = explode("\r\n\r\n", $request, 2);
         $this->parseHeaders($headers);
-        if (isset($this->headers['content-encoding'])) {
-            $this->body = $this->decodeBody($this->headers['content-encoding'], $this->body);
-            $this->headers['x-original-content-encoding'] = $this->headers['content-encoding'];
-            unset($this->headers['content-encoding']);
+        $this->decodeBody();
+        $charset = $this->getCharset();
+        if ($charset !== null && strcasecmp('utf-8', $charset)) {
+            $this->body = mb_convert_encoding($this->body, 'utf-8', $charset);
         }
     }
 
-    private function decodeBody($encoding, $body)
+    /**
+     * Decoding body
+     * @return void
+     * @throws InvalidValueException
+     */
+    private function decodeBody()
     {
-        switch ($encoding) {
-            case 'gzip':
-                return gzdecode($body);
+        if ($this->body === '') {
+            $this->body = null;
         }
+        if ($this->body === null || !isset($this->headers['content-encoding'])) {
+            return;
+        }
+        $this->headers['x-original-content-encoding'] = $this->headers['content-encoding'];
+        $contentEncoding = $this->headers['content-encoding'];
+        switch ($contentEncoding) {
+            default:
+                throw new InvalidValueException('Unsupported content-encoding: ' . $contentEncoding);
+            case 'gzip':
+                $content = @gzdecode($this->body);
+                if ($content === false) {
+                    throw new InvalidValueException('Invalid content!');
+                }
+                $this->body = $content;
+                break;
+        }
+        unset($this->headers['content-encoding']);
+    }
 
-        throw new InvalidValueException('Unsupported content-encoding: ' . $encoding);
+    /**
+     * Get charset from header
+     * @return string
+     */
+    private function getCharset(): string
+    {
+        $charset = null;
+        $arr = preg_split('!\s*+;\s*+!', $this->headers['content-type']);
+        foreach ($arr as $param) {
+            if (stripos($param, 'charset=') === 0) {
+                return substr($param, strlen('charset='));
+            }
+        }
+        return $charset;
     }
 }
