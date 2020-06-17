@@ -98,9 +98,9 @@ class RawResponse extends BaseRawMessage
 
     /**
      * Get charset from header
-     * @return string
+     * @return null|string
      */
-    private function getCharset(): string
+    private function getCharset()
     {
         $charset = null;
         $arr = preg_split('!\s*+;\s*+!', $this->headers['content-type']);
