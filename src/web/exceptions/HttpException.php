@@ -46,7 +46,7 @@ class HttpException extends Exception
         }
         $this->errors = $errors;
         $this->contentId = $contentId;
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, (int) $code, $previous);
     }
 
     public function getName()
