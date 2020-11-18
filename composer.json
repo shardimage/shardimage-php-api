@@ -19,7 +19,7 @@
     "require": {
         "php": "^7.0",
         "guzzlehttp/psr7": "^1.4",
-        "guzzlehttp/guzzle": "^6.2"
+        "guzzlehttp/guzzle": "^6.2 | ^7.0"
     },
     "require-dev": {
         "yiisoft/yii2-apidoc": "~2.0.0"
